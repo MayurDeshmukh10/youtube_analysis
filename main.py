@@ -153,19 +153,25 @@ unique.sort_values(by='pos_comm',ascending=False).head(5)
 videos[videos.video_id == 'eERPlIdPJtI'].title[225]
 
 
-sns.barplot(data=unique.sort_values(by='pos_comm',ascending=False).head(10),x='id',y='pos_comm')
+sns.barplot(data=unique.sort_values(by='pos_comm',ascending=False).head(10),x='Video ID',y='Positive Comments')
 plt.xticks(rotation=45)
 plt.figure(figsize=(5,4))
+plt.xlabel('Video ID')
+plt.ylabel('positive Comments')
 plt.show()
 
-sns.barplot(data=unique.sort_values(by='neg_comm',ascending=False).head(10),x='id',y='neg_comm')
+sns.barplot(data=unique.sort_values(by='neg_comm',ascending=False).head(10),x='Video ID',y='Negative Comments')
 plt.xticks(rotation=45)
 plt.figure(figsize=(5,4))
+plt.xlabel('Video ID')
+plt.ylabel('Negative Comments')
 plt.show()
 
-sns.barplot(data=unique.sort_values(by='total_comments',ascending=False).head(10),x='id',y='total_comments')
+sns.barplot(data=unique.sort_values(by='total_comments',ascending=False).head(10),x='Video ID',y='Total Comments')
 plt.xticks(rotation=45)
 plt.figure(figsize=(5,4))
+plt.xlabel('Video ID')
+plt.ylabel('Total Comments')
 plt.show()
 
 sns.regplot(data=videos,x='views',y='likes')
