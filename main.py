@@ -1,4 +1,4 @@
-#base working code
+#all basic features are working according to kernel
 
 import pandas as pd
 import numpy as np
