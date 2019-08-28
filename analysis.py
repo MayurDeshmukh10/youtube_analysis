@@ -22,7 +22,7 @@ from nltk.tokenize import TweetTokenizer
 
 
 
-df_yout = pd.read_csv("USvideos.csv")
+df_yout = pd.read_csv("INvideos.csv")
 
 #Looking some information of the data
 print(df_yout.shape)
