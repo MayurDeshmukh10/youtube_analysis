@@ -31,6 +31,28 @@ print(df_yout.nunique())
 df_yout.info()
 
 
+def visualize_most(my_df, column, num=10):
+    sorted_df = my_df.sort_values(column, ascending=False).iloc[:num]
+
+    ax = sorted_df[column].plot.bar()
+
+    labels = []
+    for item in sorted_df['title']:
+        labels.append(item[:10] + '...')
+    ax.set_xticklabels(labels, rotation=45, fontsize=10)
+
+    plt.show()
+
+
+visualize_most(df_yout, 'views')
+
+visualize_most(df_yout, 'likes', num=5)
+
+visualize_most(df_yout, 'dislikes')
+
+visualize_most(df_yout, 'comment_count')
+
+
 #sns.set(style="darkgrid")
 #sns.lineplot(x="publish_time",y="likes",data=df_yout)
 
