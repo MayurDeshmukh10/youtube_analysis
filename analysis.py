@@ -53,10 +53,26 @@ visualize_most(df_yout, 'dislikes')
 visualize_most(df_yout, 'comment_count')
 
 
+
 #sns.set(style="darkgrid")
 #sns.lineplot(x="publish_time",y="likes",data=df_yout)
 
+df_ind_single_day_trend=df_yout.drop_duplicates(subset='video_id', keep=False, inplace=False)
+df_ind_multiple_day_trend= df_yout.drop_duplicates(subset='video_id',keep='first',inplace=False)
 
+frames = [df_ind_single_day_trend, df_ind_multiple_day_trend]
+df_ind_without_duplicates=pd.concat(frames)
+
+
+
+ind_trending_channel=df_ind_without_duplicates.groupby(by=['channel_title'],as_index=False).count().sort_values(by='title',ascending=False).head()
+
+plt.figure(figsize=(10,10))
+sns.set_style("whitegrid")
+ax = sns.barplot(x=ind_trending_channel['channel_title'],y=ind_trending_channel['video_id'], data=ind_trending_channel)
+plt.xlabel("Channel Title")
+plt.ylabel("Count")
+plt.title("Top 5 Trending Channel in INDIA")
 
 df_yout['likes_log'] = np.log(df_yout['likes'] + 1)
 df_yout['views_log'] = np.log(df_yout['views'] + 1)
