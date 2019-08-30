@@ -12,7 +12,7 @@ from plotly.graph_objs import *
 import seaborn as sns
 
 
-df = pd.read_csv('USvideos.csv')
+df = pd.read_csv('INvideos.csv')
 df.head()
 
 
