@@ -22,7 +22,7 @@ from nltk.tokenize import TweetTokenizer
 
 
 
-df_yout = pd.read_csv("USvideos.csv")
+df_yout = pd.read_csv("INvideos.csv")
 
 #Looking some information of the data
 print(df_yout.shape)
@@ -30,6 +30,49 @@ print(df_yout.nunique())
 
 df_yout.info()
 
+
+def visualize_most(my_df, column, num=10):
+    sorted_df = my_df.sort_values(column, ascending=False).iloc[:num]
+
+    ax = sorted_df[column].plot.bar()
+
+    labels = []
+    for item in sorted_df['title']:
+        labels.append(item[:10] + '...')
+    ax.set_xticklabels(labels, rotation=45, fontsize=10)
+
+    plt.show()
+
+
+visualize_most(df_yout, 'views')
+
+visualize_most(df_yout, 'likes', num=5)
+
+visualize_most(df_yout, 'dislikes')
+
+visualize_most(df_yout, 'comment_count')
+
+
+
+#sns.set(style="darkgrid")
+#sns.lineplot(x="publish_time",y="likes",data=df_yout)
+
+df_ind_single_day_trend=df_yout.drop_duplicates(subset='video_id', keep=False, inplace=False)
+df_ind_multiple_day_trend= df_yout.drop_duplicates(subset='video_id',keep='first',inplace=False)
+
+frames = [df_ind_single_day_trend, df_ind_multiple_day_trend]
+df_ind_without_duplicates=pd.concat(frames)
+
+
+
+ind_trending_channel=df_ind_without_duplicates.groupby(by=['channel_title'],as_index=False).count().sort_values(by='title',ascending=False).head()
+
+plt.figure(figsize=(10,10))
+sns.set_style("whitegrid")
+ax = sns.barplot(x=ind_trending_channel['channel_title'],y=ind_trending_channel['video_id'], data=ind_trending_channel)
+plt.xlabel("Channel Title")
+plt.ylabel("Count")
+plt.title("Top 5 Trending Channel in INDIA")
 
 df_yout['likes_log'] = np.log(df_yout['likes'] + 1)
 df_yout['views_log'] = np.log(df_yout['views'] + 1)
@@ -40,23 +83,24 @@ plt.figure(figsize = (12,6))
 
 plt.subplot(221)
 g1 = sns.distplot(df_yout['views_log'])
-g1.set_title("VIEWS LOG DISTRIBUITION", fontsize=16)
+g1.set_title("VIEWS LOG-NORMAL DISTRIBUTION", fontsize=16)
 
 plt.subplot(224)
 g2 = sns.distplot(df_yout['likes_log'],color='green')
-g2.set_title('LIKES LOG DISTRIBUITION', fontsize=16)
+g2.set_title('LIKES LOG-NORMAL DISTRIBUTION', fontsize=16)
 
 plt.subplot(223)
 g3 = sns.distplot(df_yout['dislikes_log'], color='r')
-g3.set_title("DISLIKES LOG DISTRIBUITION", fontsize=16)
+g3.set_title("DISLIKES LOG-NORMAL DISTRIBUTION", fontsize=16)
 
 plt.subplot(222)
 g4 = sns.distplot(df_yout['comment_log'])
-g4.set_title("COMMENTS LOG DISTRIBUITION", fontsize=16)
+g4.set_title("COMMENTS LOG-NORMAL DISTRIBUTION", fontsize=16)
 
-plt.subplots_adjust(wspace = 0.2, hspace = 0.4,top = 0.9)
+plt.subplots_adjust(wspace = 0.2, hspace = 0.6,top = 0.9)
 
 plt.show()
+
 
 
 df_yout['category_name'] = np.nan
@@ -87,14 +131,14 @@ plt.figure(figsize = (14,9))
 plt.subplot(211)
 g = sns.countplot('category_name', data=df_yout, palette="Set1")
 g.set_xticklabels(g.get_xticklabels(),rotation=45)
-g.set_title("Counting the Video Category's ", fontsize=15)
+g.set_title("Count of Videos by Category Names", fontsize=15)
 g.set_xlabel("", fontsize=12)
-g.set_ylabel("Count", fontsize=12)
+g.set_ylabel("Video Count", fontsize=12)
 
 plt.subplot(212)
 g1 = sns.boxplot(x='category_name', y='views_log', data=df_yout, palette="Set1")
 g1.set_xticklabels(g.get_xticklabels(),rotation=45)
-g1.set_title("Views Distribuition by Category Names", fontsize=20)
+g1.set_title("Views Distribution by Category Names", fontsize=20)
 g1.set_xlabel("", fontsize=15)
 g1.set_ylabel("Views(log)", fontsize=15)
 
@@ -103,33 +147,38 @@ plt.subplots_adjust(hspace = 0.9, top = 0.9)
 plt.show()
 
 
+
 plt.figure(figsize = (14,6))
 
 g = sns.boxplot(x='category_name', y='likes_log', data=df_yout, palette="Set1")
 g.set_xticklabels(g.get_xticklabels(),rotation=45)
-g.set_title("Likes Distribuition by Category Names ", fontsize=15)
+g.set_title("Likes Distribution by Category Names ", fontsize=15)
 g.set_xlabel("", fontsize=12)
 g.set_ylabel("Likes(log)", fontsize=12)
 plt.show()
+
 
 plt.figure(figsize = (14,6))
 
 g = sns.boxplot(x='category_name', y='dislikes_log', data=df_yout, palette="Set1")
 g.set_xticklabels(g.get_xticklabels(),rotation=45)
-g.set_title("Dislikes distribuition by Category's", fontsize=15)
+g.set_title("Dislikes Distribution by Category Names", fontsize=15)
 g.set_xlabel("", fontsize=12)
 g.set_ylabel("Dislikes(log)", fontsize=12)
 plt.show()
+
 
 plt.figure(figsize = (14,6))
 
 g = sns.boxplot(x='category_name', y='comment_log', data=df_yout, palette="Set1")
 g.set_xticklabels(g.get_xticklabels(),rotation=45)
-g.set_title("Comments Distribuition by Category Names", fontsize=15)
+g.set_title("Comments Distribution by Category Names", fontsize=15)
 g.set_xlabel("", fontsize=12)
 g.set_ylabel("Comments Count(log)", fontsize=12)
 
 plt.show()
+
+
 
 df_yout['like_rate'] =  df_yout ['likes'] / df_yout['views'] * 100
 df_yout['dislike_rate'] =  df_yout ['dislikes'] / df_yout['views'] * 100
@@ -140,25 +189,20 @@ plt.figure(figsize = (9,6))
 g1 = sns.distplot(df_yout['dislike_rate'], color='red',hist=False, label="Dislike")
 g1 = sns.distplot(df_yout['like_rate'], color='green',hist=False, label="Like")
 g1 = sns.distplot(df_yout['comment_rate'],hist=False,label="Comment")
-g1.set_title('CONVERT RATE DISTRIBUITION', fontsize=16)
+g1.set_title('CONVERT RATE DISTRIBUTION', fontsize=16)
 plt.legend()
 plt.show()
 
-plt.figure(figsize = (12,18))
+
+
+plt.figure(figsize = (10,16))
 
 plt.subplot(311)
 g= sns.boxplot(x='category_name',y='like_rate',  data=df_yout)
 g.set_xticklabels(g.get_xticklabels(),rotation=45)
-g.set_title("LIKE RATE DISTRIBUITIONS", fontsize=15)
+g.set_title("LIKE RATE DISTRIBUTION", fontsize=15)
 g.set_xlabel("", fontsize=12)
 g.set_ylabel("Like rate", fontsize=12)
-
-plt.subplot(312)
-g1= sns.boxplot(y='dislike_rate', x='category_name', data=df_yout)
-g1.set_xticklabels(g.get_xticklabels(),rotation=45)
-g1.set_title("DISLIKE RATE DISTRIBUITIONS", fontsize=15)
-g1.set_xlabel("", fontsize=12)
-g1.set_ylabel("Dislike rate", fontsize=12)
 
 plt.subplot(313)
 g2= sns.boxplot(y='comment_rate', x='category_name', data=df_yout)
@@ -167,9 +211,25 @@ g2.set_title("COMMENT RATE BY CATEGORY NAME", fontsize=15)
 g2.set_xlabel("Category Names", fontsize=12)
 g2.set_ylabel("Comment Rate", fontsize=12)
 
-plt.subplots_adjust(wspace = 0.2, hspace = 0.5,top = 0.9)
+
+plt.subplots_adjust(wspace = 0.5, hspace = 0.5,top = 0.9)
 
 plt.show()
+
+plt.figure(figsize = (10,16))
+
+plt.subplot(312)
+g1= sns.boxplot(y='dislike_rate', x='category_name', data=df_yout)
+g1.set_xticklabels(g.get_xticklabels(),rotation=45)
+g1.set_title("DISLIKE RATE DISTRIBUTION", fontsize=15)
+g1.set_xlabel("", fontsize=12)
+g1.set_ylabel("Dislike rate", fontsize=12)
+
+plt.subplots_adjust(wspace = 0.5, hspace = 0.9,top = 0.9)
+
+plt.show()
+
+
 
 plt.figure(figsize = (14,8))
 plt.subplots_adjust(wspace = 0.2, hspace = 0.4,top = 0.9)
@@ -187,6 +247,8 @@ g2 = sns.countplot(x='video_error_or_removed', data=df_yout)
 g2.set_title("Video Error or Removed", fontsize=16)
 plt.show()
 
+
+
 plt.figure(figsize = (12,10))
 
 plt.subplot(2,2,1)
@@ -196,7 +258,7 @@ g1 = sns.distplot(df_yout[df_yout['ratings_disabled'] == True]['views_log'],
                   hist=False, label='Rati_dis')
 g1 = sns.distplot(df_yout[df_yout['video_error_or_removed'] == True]['views_log'],
                   hist=False, label='vide_rmv_err')
-g1.set_title("VIEWS LOG DISTRIBUITION", fontsize=16)
+g1.set_title("VIEWS LOG DISTRIBUTION", fontsize=16)
 
 '''plt.subplot(2,2,2)
 g4 = sns.distplot(df_yout[df_yout['comments_disabled'] == True]['comment_log'],
@@ -205,7 +267,7 @@ g4 = sns.distplot(df_yout[df_yout['ratings_disabled'] == True]['comment_log'],
                   hist=False, label='Rati_dis')
 g4 = sns.distplot(df_yout[df_yout['video_error_or_removed'] == True]['comment_log'],
                   hist=False, label='vide_rmv_err')
-g4.set_title("COMMENTS LOG DISTRIBUITION", fontsize=16)
+g4.set_title("COMMENTS LOG Distribution", fontsize=16)
 
 plt.subplot(2,2,3)
 g3 = sns.distplot(df_yout[df_yout['comments_disabled'] == True]['dislikes_log'],
@@ -214,7 +276,7 @@ g3 = sns.distplot(df_yout[df_yout['ratings_disabled'] == True]['dislikes_log'],
                   hist=False, label='Rati_dis')
 g3 = sns.distplot(df_yout[df_yout['video_error_or_removed'] == True]['dislikes_log'],
                   hist=False, label='vide_rmv_err')
-g3.set_title("DISLIKES LOG DISTRIBUITION", fontsize=16)
+g3.set_title("DISLIKES LOG Distribution", fontsize=16)
 
 plt.subplot(2,2,4)
 g2 = sns.distplot(df_yout[df_yout['comments_disabled'] == True]['likes_log'],
@@ -223,7 +285,7 @@ g2 = sns.distplot(df_yout[df_yout['ratings_disabled'] == True]['likes_log'],
                   hist=False, label='Rati_dis')
 g2 = sns.distplot(df_yout[df_yout['video_error_or_removed'] == True]['likes_log'],
                   hist=False, label='vide_rmv_err')
-g2.set_title('LIKES LOG DISTRIBUITION', fontsize=16)
+g2.set_title('LIKES LOG Distribution', fontsize=16)
 
 plt.subplots_adjust(wspace = 0.2, hspace = 0.3,top = 0.9)
 plt.legend()
@@ -235,6 +297,8 @@ plt.figure(figsize = (10,8))'''
 sns.heatmap(df_yout[['like_rate', 'dislike_rate', 'comment_rate', 'comment_log',
          'views_log','likes_log','dislikes_log', "category_name"]].corr(), annot=True)
 plt.show()
+
+
 
 
 
@@ -290,21 +354,21 @@ g1 = sns.distplot(df_yout['count_word'],
                   hist=False, label='Text')
 g1 = sns.distplot(df_yout['count_word_tags'],
                   hist=False, label='Tags')
-g1.set_title("COUNT WORDS DISTRIBUITION", fontsize=16)
+g1.set_title("COUNT WORDS DISTRIBUTION", fontsize=16)
 
 plt.subplot(422)
 g2 = sns.distplot(df_yout['count_unique_word'],
                   hist=False, label='Text')
 g2 = sns.distplot(df_yout['count_unique_word_tags'],
                   hist=False, label='Tags')
-g2.set_title("COUNT UNIQUE DISTRIBUITION", fontsize=16)
+g2.set_title("COUNT UNIQUE DISTRIBUTION", fontsize=16)
 
 plt.subplot(423)
 g3 = sns.distplot(df_yout['count_letters'],
                   hist=False, label='Text')
 g3 = sns.distplot(df_yout['count_letters_tags'],
                   hist=False, label='Tags')
-g3.set_title("COUNT LETTERS DISTRIBUITION", fontsize=16)
+g3.set_title("COUNT LETTERS DISTRIBUTION", fontsize=16)
 
 plt.subplot(424)
 g4 = sns.distplot(df_yout["count_punctuations"],
@@ -312,28 +376,35 @@ g4 = sns.distplot(df_yout["count_punctuations"],
 g4 = sns.distplot(df_yout["count_punctuations_tags"],
                   hist=False, label='Tags')
 g4.set_xlim([-2,50])
-g4.set_title('COUNT PONCTUATIONS DISTRIBUITION', fontsize=16)
+g4.set_title('COUNT PONCTUATIONS DISTRIBUTION', fontsize=16)
+
+plt.subplots_adjust(wspace = 0.2, hspace = 1.2)
+plt.legend()
+plt.show()
+
+
+plt.figure(figsize = (14,20))
 
 plt.subplot(425)
 g5 = sns.distplot(df_yout["count_words_upper"] ,
                   hist=False, label='Text')
 g5 = sns.distplot(df_yout["count_words_upper_tags"] ,
                   hist=False, label='Tags')
-g5.set_title('COUNT WORDS UPPER DISTRIBUITION', fontsize=16)
+g5.set_title('COUNT WORDS UPPER DISTRIBUTION', fontsize=16)
 
 plt.subplot(426)
 g6 = sns.distplot(df_yout["count_words_title"],
                   hist=False, label='Text')
 g6 = sns.distplot(df_yout["count_words_title_tags"],
                   hist=False, label='Tags')
-g6.set_title('WORDS DISTRIBUITION', fontsize=16)
+g6.set_title('WORDS DISTRIBUTION', fontsize=16)
 
 plt.subplot(427)
 g7 = sns.distplot(df_yout["count_stopwords"],
                   hist=False, label='Title')
 g7 = sns.distplot(df_yout["count_stopwords_tags"],
                   hist=False, label='Tags')
-g7.set_title('STOPWORDS DISTRIBUITION', fontsize=16)
+g7.set_title('STOPWORDS DISTRIBUTION', fontsize=16)
 
 plt.subplot(428)
 g8 = sns.distplot(df_yout["mean_word_len"],
@@ -341,11 +412,13 @@ g8 = sns.distplot(df_yout["mean_word_len"],
 g8 = sns.distplot(df_yout["mean_word_len_tags"],
                   hist=False, label='Tags')
 g8.set_xlim([-2,100])
-g8.set_title('MEAN WORD LEN DISTRIBUITION', fontsize=16)
+g8.set_title('MEAN WORD LEN DISTRIBUTION', fontsize=16)
 
-plt.subplots_adjust(wspace = 0.2, hspace = 0.4,top = 0.9)
+plt.subplots_adjust(wspace = 0.2, hspace = 1.8)
 plt.legend()
 plt.show()
+
+
 
 
 plt.figure(figsize = (12,8))
@@ -379,35 +452,39 @@ plt.subplots_adjust(wspace = 0.2, hspace = 0.4,top = 0.9)
 plt.show()
 
 
+
+
 plt.figure(figsize = (12,8))
 
 plt.subplot(221)
 g=sns.boxplot(x='count_punctuations_tags', y='views_log',data=df_yout[df_yout['count_punctuations_tags'] < 20])
-g.set_title("Vews by Ponctuations tags")
+g.set_title("Vews by Punctuations tags")
 g.set_xlabel("Numer of Tag Punctuations")
 g.set_ylabel("Vews log")
 
 plt.subplot(222)
 g1 = sns.boxplot(x='count_punctuations_tags', y='likes_log',data=df_yout[df_yout['count_punctuations_tags'] < 20])
-g1.set_title("Likes by Ponctuations tags")
+g1.set_title("Likes by Punctuations tags")
 g1.set_xlabel("Numer of Tag Punctuations")
 g1.set_ylabel("Likes log")
 
 plt.subplot(223)
 g2 = sns.boxplot(x='count_punctuations_tags', y='dislikes_log',data=df_yout[df_yout['count_punctuations_tags'] < 20])
-g2.set_title("Dislikes by Ponctuations tagsss")
+g2.set_title("Dislikes by Punctuations tagsss")
 g2.set_xlabel("Numer of Tag Punctuations")
 g2.set_ylabel("Dislikes log")
 
 plt.subplot(224)
 g3 = sns.boxplot(x='count_punctuations_tags', y='comment_log',data=df_yout[df_yout['count_punctuations_tags'] < 20])
-g3.set_title("Comments by Ponctuations tags")
+g3.set_title("Comments by Punctuations tags")
 g3.set_xlabel("Numer of Tag Punctuations")
 g3.set_ylabel("Comments log")
 
 plt.subplots_adjust(wspace = 0.2, hspace = 0.4,top = 0.9)
 
 plt.show()
+
+
 
 
 plt.figure(figsize = (12,8))
@@ -418,6 +495,8 @@ sns.heatmap(df_yout[['count_word', 'count_unique_word','count_letters',
                      'views_log', 'likes_log','dislikes_log','comment_log',
                      'ratings_disabled', 'comments_disabled', 'video_error_or_removed']].corr(), annot=True)
 plt.show()
+
+
 
 mpl.rcParams['font.size']= 15
 mpl.rcParams['savefig.dpi']= 100
@@ -444,6 +523,8 @@ plt.axis('off')
 plt.show()
 
 
+
+
 plt.figure(figsize = (15,15))
 
 stopwords = set(STOPWORDS)
@@ -461,6 +542,7 @@ plt.imshow(wordcloud)
 plt.title("WORD CLOUD - DESCRIPTION")
 plt.axis('off')
 plt.show()
+
 
 
 plt.figure(figsize = (15,15))
@@ -487,6 +569,8 @@ plt.axis('off')
 plt.show()
 
 
+
+
 plt.figure(figsize = (15,15))
 
 stopwords = set(STOPWORDS)
@@ -503,6 +587,8 @@ plt.imshow(wordcloud)
 plt.title("WORD CLOUD - TAGS")
 plt.axis('off')
 plt.show()
+
+
 
 df_yout['publish_time'] = pd.to_datetime(df_yout['publish_time'], format='%Y-%m-%dT%H:%M:%S.%fZ')
 
@@ -532,6 +618,8 @@ g1.set_ylabel("Like Rate(log)", fontsize=15)
 plt.subplots_adjust(hspace = 0.5, top = 0.9)
 
 plt.show()
+
+
 
 
 # separates date and time into two columns from 'publish_time' column
