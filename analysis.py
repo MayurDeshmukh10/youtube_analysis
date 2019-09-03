@@ -376,7 +376,7 @@ g4 = sns.distplot(df_yout["count_punctuations"],
 g4 = sns.distplot(df_yout["count_punctuations_tags"],
                   hist=False, label='Tags')
 g4.set_xlim([-2,50])
-g4.set_title('COUNT PONCTUATIONS DISTRIBUTION', fontsize=16)
+g4.set_title('COUNT Punctuations DISTRIBUTION', fontsize=16)
 
 plt.subplots_adjust(wspace = 0.2, hspace = 1.2)
 plt.legend()
@@ -412,7 +412,7 @@ g8 = sns.distplot(df_yout["mean_word_len"],
 g8 = sns.distplot(df_yout["mean_word_len_tags"],
                   hist=False, label='Tags')
 g8.set_xlim([-2,100])
-g8.set_title('MEAN WORD LEN DISTRIBUTION', fontsize=16)
+g8.set_title('MEAN WORD LENGTH DISTRIBUTION', fontsize=16)
 
 plt.subplots_adjust(wspace = 0.2, hspace = 1.8)
 plt.legend()
@@ -425,25 +425,25 @@ plt.figure(figsize = (12,8))
 
 plt.subplot(221)
 g=sns.boxplot(x='count_punctuations', y='views_log',data=df_yout)
-g.set_title("Vews by Ponctuations")
+g.set_title("Vews by Punctuations")
 g.set_xlabel("Numer of Punctuations")
 g.set_ylabel("Vews log")
 
 plt.subplot(222)
 g1 = sns.boxplot(x='count_punctuations', y='likes_log',data=df_yout)
-g1.set_title("Likes by Ponctuations")
+g1.set_title("Likes by Punctuations")
 g1.set_xlabel("Numer of Punctuations")
 g1.set_ylabel("Likes log")
 
 plt.subplot(223)
 g2 = sns.boxplot(x='count_punctuations', y='dislikes_log',data=df_yout)
-g2.set_title("Dislikes by Ponctuations")
+g2.set_title("Dislikes by Punctuations")
 g2.set_xlabel("Numer of Punctuations")
 g2.set_ylabel("Dislikes log")
 
 plt.subplot(224)
 g3 = sns.boxplot(x='count_punctuations', y='comment_log',data=df_yout)
-g3.set_title("Comments by Ponctuations")
+g3.set_title("Comments by Punctuations")
 g3.set_xlabel("Numer of Punctuations")
 g3.set_ylabel("Comments log")
 
