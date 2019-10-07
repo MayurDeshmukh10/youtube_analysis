@@ -105,9 +105,12 @@ xtrain_bow, xvalid_bow, ytrain, yvalid = train_test_split(train_bow, train['pola
 #xtrain_tfidf = train_tfidf[ytrain.index]
 #xvalid_tfidf = train_tfidf[yvalid.index]
 
+
+#----------------------------------------------------------------------------------------------------
+
 from sklearn import svm
 
-svc = svm.SVC(kernel='linear', C=1, probability=True).fit(xtrain_bow, ytrain)
+svc = svm.SVC(kernel='linear', C=1, probability=True,decision_function_shape='ovo').fit(xtrain_bow, ytrain)
 
 prediction = svc.predict_proba(xvalid_bow)
 prediction_int = prediction[:,1] >= 0.3
@@ -131,12 +134,26 @@ prediction_int = prediction[:,1] >= 0.3 # if prediction is greater than or equal
 prediction_int = prediction_int.astype(np.int)'''
 #-----------------------------------------------------------------------------------------------------------------
 
+'''from sklearn.ensemble import RandomForestClassifier
 
+rf = RandomForestClassifier(n_estimators=400, random_state=11).fit(xtrain_bow, ytrain)
+prediction_int = rf.predict(xvalid_bow)'''
 
-print(f1_score(yvalid, prediction_int)) # calculating f1 score
+#-----------------------------------------------------------------------------------------------------------------
 
+print("--------------------------------------------Results--------------------------------------------")
 
+print()
+
+print("     F1 Score = ",f1_score(yvalid, prediction_int)) # calculating f1 score
+print()
+print("     Confusion Matrix of Model")
+print()
 print(confusion_matrix(yvalid,prediction_int))
+print()
+
+print("--------Classification Report--------------")
+print()
 
 print(classification_report(yvalid,prediction_int))
 
@@ -162,7 +179,9 @@ plt.show()
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import precision_recall_curve 
 
-print("ROC_AUC_SCORE",roc_auc_score(yvalid,y_pred_prob))
+print()
+
+print("     ROC_AUC_SCORE = ",roc_auc_score(yvalid,y_pred_prob))
 
 
 
@@ -182,8 +201,11 @@ plt.show()
 
 from sklearn.metrics import average_precision_score
 
+print()
+print("     Average_Precision_Score = ",average_precision_score(yvalid, y_pred_prob))
 
-print("Average_Precision_Score",average_precision_score(yvalid, y_pred_prob))
+
+
 
 
 
