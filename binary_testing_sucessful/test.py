@@ -78,8 +78,14 @@ bow_vectorizer = CountVectorizer(max_df=0.90, min_df=2, max_features=1000, stop_
 # bag-of-words feature matrix
 bow = bow_vectorizer.fit_transform(combi['Comment'])
 
+# TF-IDF feature matrix
+'''from sklearn.feature_extraction.text import TfidfVectorizer
+tfidf_vectorizer = TfidfVectorizer(max_df=0.90, min_df=2, max_features=1000, stop_words='english')
 
-from sklearn.linear_model import LogisticRegression
+tfidf = tfidf_vectorizer.fit_transform(combi['Comment'])'''
+
+
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
@@ -88,15 +94,44 @@ from sklearn.metrics import classification_report
 train_bow = bow[:17741,:]
 test_bow = bow[17742:,:]
 
+#train_tfidf = tfidf[:17741,:]
+#test_tfidf = tfidf[17742:,:]
+
+
 # splitting data into training and validation set
 xtrain_bow, xvalid_bow, ytrain, yvalid = train_test_split(train_bow, train['polarity'], random_state=42, test_size=0.3)
+#xtrain_bow, xvalid_bow, ytrain, yvalid = train_test_split(train_tfidf, train['polarity'], random_state=42, test_size=0.3)
+
+#xtrain_tfidf = train_tfidf[ytrain.index]
+#xvalid_tfidf = train_tfidf[yvalid.index]
+
+from sklearn import svm
+
+svc = svm.SVC(kernel='linear', C=1, probability=True).fit(xtrain_bow, ytrain)
+
+prediction = svc.predict_proba(xvalid_bow)
+prediction_int = prediction[:,1] >= 0.3
+prediction_int = prediction_int.astype(np.int)
+
+
+
+#--------------------------------------------------------------------------------------------------------------
+
+'''from sklearn.linear_model import LogisticRegression
+
 
 lreg = LogisticRegression(solver='lbfgs',max_iter=200)
-lreg.fit(xtrain_bow, ytrain) # training the model
+
+#lreg.fit(xtrain_bow, ytrain) # training the model with bow
+
+lreg.fit(xtrain_tfidf, ytrain)
 
 prediction = lreg.predict_proba(xvalid_bow) # predicting on the validation set
 prediction_int = prediction[:,1] >= 0.3 # if prediction is greater than or equal to 0.3 than 1 else 0
-prediction_int = prediction_int.astype(np.int)
+prediction_int = prediction_int.astype(np.int)'''
+#-----------------------------------------------------------------------------------------------------------------
+
+
 
 print(f1_score(yvalid, prediction_int)) # calculating f1 score
 
@@ -107,7 +142,7 @@ print(classification_report(yvalid,prediction_int))
 
 
 
-y_pred_prob = lreg.predict_proba(xvalid_bow)[:,1]
+y_pred_prob = svc.predict_proba(xvalid_bow)[:,1]
 
 from sklearn.metrics import roc_curve
 
