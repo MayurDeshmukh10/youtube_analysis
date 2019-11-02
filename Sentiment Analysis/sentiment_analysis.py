@@ -183,6 +183,14 @@ print()
 print(confusion_matrix(yvalid,prediction_int))
 print()
 
+
+from mlxtend.plotting import plot_confusion_matrix
+
+confusion_mat = confusion_matrix(yvalid,prediction_int)
+
+fig, ax = plot_confusion_matrix(conf_mat=confusion_mat)
+plt.show()
+
 print("--------Classification Report--------------")
 print()
 
