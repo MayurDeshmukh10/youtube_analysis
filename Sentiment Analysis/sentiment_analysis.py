@@ -118,6 +118,37 @@ prediction_int = prediction_int.astype(np.int)
 
 
 
+
+positive_comments = []
+negative_comments = []
+
+for i in prediction_int:
+        if i == 0:
+            negative_comments.append(i)
+        else:
+            positive_comments.append(i)
+
+
+
+print("TOTAL POSITIVE COMMENTS : ",len(positive_comments))
+print("TOTAL NEGATIVE COMMENTS : ",len(negative_comments))
+
+
+
+plt.bar(["Positive"],[len(positive_comments)],label = "Positive")
+plt.bar(["Negative"],[len(negative_comments)],label = "Negative")
+plt.legend()
+plt.xlabel('Type of Comment')
+plt.ylabel('Count of Comment')
+plt.title('Sentiment Analysis')
+
+plt.show()
+
+
+
+
+
+
 #--------------------------------------------------------------------------------------------------------------
 
 '''from sklearn.linear_model import LogisticRegression
@@ -208,6 +239,9 @@ print("     Average_Precision_Score = ",average_precision_score(yvalid, y_pred_p
 from sklearn.metrics import accuracy_score
 
 acc_score = accuracy_score(yvalid,prediction_int)
+
+print()
+print("     Accuracy score = ",acc_score)
 
 
 
