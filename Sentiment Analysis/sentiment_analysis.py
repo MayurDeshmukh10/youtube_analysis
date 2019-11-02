@@ -205,6 +205,11 @@ print()
 print("     Average_Precision_Score = ",average_precision_score(yvalid, y_pred_prob))
 
 
+from sklearn.metrics import accuracy_score
+
+acc_score = accuracy_score(yvalid,prediction_int)
+
+
 
 
 
