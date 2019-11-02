@@ -112,6 +112,12 @@ from sklearn import svm
 
 svc = svm.SVC(kernel='linear', C=1, probability=True,decision_function_shape='ovo').fit(xtrain_bow, ytrain)
 
+from mlxtend.plotting import plot_learning_curves
+
+plot_learning_curves(xtrain_bow,ytrain,xvalid_bow,yvalid,svc)
+plt.show()
+
+
 prediction = svc.predict_proba(xvalid_bow)
 prediction_int = prediction[:,1] >= 0.3
 prediction_int = prediction_int.astype(np.int)
@@ -188,7 +194,10 @@ from mlxtend.plotting import plot_confusion_matrix
 
 confusion_mat = confusion_matrix(yvalid,prediction_int)
 
-fig, ax = plot_confusion_matrix(conf_mat=confusion_mat)
+class_names = ['Positive','Negative']
+
+
+fig, ax = plot_confusion_matrix(conf_mat=confusion_mat,class_names=class_names)
 plt.show()
 
 print("--------Classification Report--------------")
