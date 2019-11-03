@@ -31,7 +31,7 @@ print(df_yout.nunique())
 df_yout.info()
 
 
-def visualize_most(my_df, column, num=10):
+def visualize_most(my_df, column, titles,num=10):
     sorted_df = my_df.sort_values(column, ascending=False).iloc[:num]
 
     ax = sorted_df[column].plot.bar()
@@ -41,16 +41,18 @@ def visualize_most(my_df, column, num=10):
         labels.append(item[:10] + '...')
     ax.set_xticklabels(labels, rotation=45, fontsize=10)
 
+    plt.title(titles)
+
     plt.show()
 
 
-visualize_most(df_yout, 'views')
+visualize_most(df_yout, 'views',"Top 10 Videos With Most Views")
 
-visualize_most(df_yout, 'likes', num=5)
+visualize_most(df_yout, 'likes',"Top 10 Videos With Most Likes", num=5)
 
-visualize_most(df_yout, 'dislikes')
+visualize_most(df_yout, 'dislikes',"Top 10 Videos With Most Dislikes")
 
-visualize_most(df_yout, 'comment_count')
+visualize_most(df_yout, 'comment_count',"Top 10 Videos With Comments")
 
 
 
@@ -138,7 +140,7 @@ g.set_ylabel("Video Count", fontsize=12)
 plt.subplot(212)
 g1 = sns.boxplot(x='category_name', y='views_log', data=df_yout, palette="Set1")
 g1.set_xticklabels(g.get_xticklabels(),rotation=45)
-g1.set_title("Views Distribution by Category Names", fontsize=20)
+g1.set_title("Views Distribution by Category Names", fontsize=15)
 g1.set_xlabel("", fontsize=15)
 g1.set_ylabel("Views(log)", fontsize=15)
 
@@ -222,7 +224,7 @@ plt.subplot(312)
 g1= sns.boxplot(y='dislike_rate', x='category_name', data=df_yout)
 g1.set_xticklabels(g.get_xticklabels(),rotation=45)
 g1.set_title("DISLIKE RATE DISTRIBUTION", fontsize=15)
-g1.set_xlabel("", fontsize=12)
+g1.set_xlabel("Category Names", fontsize=12)
 g1.set_ylabel("Dislike rate", fontsize=12)
 
 plt.subplots_adjust(wspace = 0.5, hspace = 0.9,top = 0.9)
@@ -346,7 +348,7 @@ df_yout['word_unique_percent_tags']=df_yout['count_unique_word_tags']*100/df_you
 df_yout['punct_percent']=df_yout['count_punctuations']*100/df_yout['count_word']
 df_yout['punct_percent_tags']=df_yout['count_punctuations_tags']*100/df_yout['count_word_tags']
 
-
+'''
 plt.figure(figsize = (12,18))
 
 plt.subplot(421)
@@ -483,11 +485,11 @@ g3.set_ylabel("Comments log")
 plt.subplots_adjust(wspace = 0.2, hspace = 0.4,top = 0.9)
 
 plt.show()
+'''
 
 
 
-
-plt.figure(figsize = (12,8))
+'''plt.figure(figsize = (12,8))
 
 sns.heatmap(df_yout[['count_word', 'count_unique_word','count_letters',
                      "count_punctuations","count_words_upper", "count_words_title",
@@ -496,7 +498,7 @@ sns.heatmap(df_yout[['count_word', 'count_unique_word','count_letters',
                      'ratings_disabled', 'comments_disabled', 'video_error_or_removed']].corr(), annot=True)
 plt.show()
 
-
+'''
 
 mpl.rcParams['font.size']= 15
 mpl.rcParams['savefig.dpi']= 100
